@@ -1,0 +1,7 @@
+<!--pages/movable/movable.wxml-->
+<wxs module="test" src="./movable.wxs"></wxs><!-- wxml中使用wxs模块 -->
+<view wx:if="{{show}}" class="area" style='position:relative;width:100%;height:100%;'>
+  <!-- data-绑定数据到控件上，当触发事件时可以获取到绑定的数据；test.模块名加方法名调用wxs中的方法 -->
+  <view data-index="1" data-obj="{{dataObj}}" bindtouchstart="{{test.touchstart}}" bindtouchmove="{{test.touchmove}}" bindtouchend='{{test.touchmove}}' class="movable" style="position:absolute;width:100px;height:100px;background:red;left:{{left}}px;top:{{top}}px"></view>
+</view>
+<!-- <view bindtap='{{taptest}}'>testbindtap</view> -->

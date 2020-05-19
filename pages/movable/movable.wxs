@@ -1,0 +1,37 @@
+var startX = 0
+var startY = 0
+var lastLeft = lastTop = 50//记录初始位置
+function touchstart(event, ins) {//事件对象和触发事件的组件所在组件
+  var touch = event.touches[0] || event.changedTouches[0]//touches触摸事件，当前停留在屏幕中的触摸点信息的数组；changedTouches触摸事件，当前变化的触摸点信息的数组
+  startX = touch.pageX//距离文档左边的位置
+  startY = touch.pageY//距离文档上边的位置
+  ins.callMethod('testCallmethod', {//不能传函数参数，传函数参数js获取到的为{complete: null}
+    complete: function(res) {
+      console.log('args', res)
+    }
+  })
+}
+function touchmove(event, ins) {
+  var touch = event.touches[0] || event.changedTouches[0]
+  var pageX = touch.pageX//当前x
+  var pageY = touch.pageY//当前y
+  var left = pageX - startX + lastLeft//手指移动的距离+开始时边距
+  var top = pageY - startY + lastTop//手指移动的距离+开始时边距
+  console.log(pageX, left, startX);
+  // console.log('idff', pageX - context.startX, left, top)
+  ins.selectComponent('.movable').setStyle({//在wxs中可以直接设置组件的样式
+    left: left + 'px',
+    top: top + 'px'
+  })
+  startX = pageX//记录当前位置为起始位置
+  startY = pageY//记录当前位置为起始位置
+  lastLeft = left//记录上次滑动结束时坐标
+  lastTop = top//记录上次滑动结束时坐标
+  // console.log('get data', JSON.stringify(ins.selectComponent('.movable').getData()))
+  console.log('get data set', JSON.stringify(ins.selectComponent('.movable').getDataset()))//wxs中可以获取到组件绑定的数据
+  // console.log('test select', ins.selectComponent('.movable').selectComponent('.dd'))
+}
+module.exports = {
+  touchstart: touchstart,
+  touchmove: touchmove,
+}

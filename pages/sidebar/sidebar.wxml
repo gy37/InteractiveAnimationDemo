@@ -1,0 +1,18 @@
+<!--page/one/index.wxml-->
+<wxs module="test" src="./sidebar.wxs"></wxs>
+<view class="page">
+  <!-- 底层页面 -->
+  <view class="page-bottom">
+    <view class="page-bottom-content">
+      <view wx:for="{{ 4 }}" wx:key="{{ index }}" class="wc" bindtap="onTapItem" data-index="{{ index }}">
+          <text>第{{ index }}个item</text>
+      </view>
+    </view>
+  </view>
+  <!-- 顶层页面 -->
+  <view data-width="{{windowWidth}}" data-transform="{{transform}}" bindtouchmove="{{test.touchmove}}" bindtouchend="{{test.touchend}}" bindtouchstart="{{test.touchstart}}" 
+    class="page-top" style="color:white;transform:{{transform}};">
+    <image bindtap="tap_ch" src="../../images/btn.png"></image>
+    右滑出现侧边菜单
+  </view>
+</view>

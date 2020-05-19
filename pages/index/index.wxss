@@ -1,0 +1,7 @@
+/* pages/index/index.wxss */
+text {
+  margin-left: 10px;
+}
+navigator {
+  margin-left: 20px;
+}
