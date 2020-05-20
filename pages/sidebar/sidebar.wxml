@@ -1,5 +1,5 @@
 <!--page/one/index.wxml-->
-<wxs module="test" src="./sidebar.wxs"></wxs>
+<wxs module="test" src="./sidebar.wxs"></wxs><!-- wxml中引用wxs模块 -->
 <view class="page">
   <!-- 底层页面 -->
   <view class="page-bottom">

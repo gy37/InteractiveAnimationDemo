@@ -1,30 +1,34 @@
-var newmark = startmark = 0
-var status = 0
+var newmark = startmark = 0//记录最新位置和起始位置
+var status = 0//记录打开和关闭状态s
 function touchstart(e, ins) {
-  var pageX = (e.touches[0] || e.changedTouches[0]).pageX
-  startmark = newmark = pageX
+  var pageX = (e.touches[0] || e.changedTouches[0]).pageX//touches当前屏幕上的触摸点；changedTouches当前屏幕上移动的触摸点
+  startmark = newmark = pageX//记录x轴方向的初始位置
 }
 function touchmove(e, ins) {
   var pageX = (e.touches[0] || e.changedTouches[0]).pageX
-  newmark = pageX
+  newmark = pageX//newmark记录最新位置
   // var data = ins.getData()
   var data = {
-    windowWidth: e.target.dataset.width,
-    transform: e.target.dataset.transform
+    windowWidth: e.target.dataset.width,//wxml中使用data-width绑定到view上的width变量
+    transform: e.target.dataset.transform//wxml中使用data-transform绑定到view上的transform变量
   }
-  if (startmark < pageX) {
-    if (data.windowWidth * 0.75 > Math.abs(newmark - startmark)) {
+  if (startmark < pageX) {//如果向右移动手指
+    if (data.windowWidth * 0.75 > Math.abs(newmark - startmark)) {//移动距离超过屏幕宽度的0.75
       // console.log(111, JSON.stringify(event), context.newmark - context.startmark)
       // ins.selectComponent('.page-top').setStyle({//wxs中设置的样式和style行内样式重复？？？使用callMethod调用js中的方法来改变偏移值，而不是直接设置style
       //   transform: 'translateX(' + Math.min(data.windowWidth * 0.75, ((status == 1 ? data.windowWidth * 0.75 : 0) + newmark - startmark)) + 'px)'
       // })
+      //newmark - startmark手指移动距离，正值，加上初始值0，即为页面左边距
+      //(status == 1 ? data.windowWidth * 0.75 : 0)展开时，初始值为0.75*屏幕宽度；合并时，初始值为0；
       ins.callMethod('updateTransform', Math.min(data.windowWidth * 0.75, ((status == 1 ? data.windowWidth * 0.75 : 0) + newmark - startmark)));
     }
   }
-  if (startmark > pageX) {
+  if (startmark > pageX) {//如果向左移动手指
     // ins.selectComponent('.page-top').setStyle({
     //   transform: 'translateX(' + Math.max(0, ((status == 1 ? data.windowWidth * 0.75 : 0) + newmark - startmark)) + 'px)'
     // })
+    //newmark - startmark手指移动距离，负值，加上初始值data.windowWidth * 0.75，即为页面左边距
+    //(status == 1 ? data.windowWidth * 0.75 : 0)展开时，初始值为0.75*屏幕宽度；合并时，初始值为0；
     ins.callMethod('updateTransform', Math.max(0, ((status == 1 ? data.windowWidth * 0.75 : 0) + newmark - startmark)));
   }
 }
@@ -35,26 +39,26 @@ function touchend(e, ins) {
   var data = {
     windowWidth: e.target.dataset.width
   }
-  if (startmark < pageX) {
-    if (data.windowWidth * 0.2 < Math.abs(newmark - startmark)) {
+  if (startmark < pageX) {//如果向右移动手指
+    if (data.windowWidth * 0.2 < Math.abs(newmark - startmark)) {//如果移动距离大于0.2*屏幕宽度
       // ins.selectComponent('.page-top').setStyle({
       //   transform: 'translateX(' + (data.windowWidth * 0.75) + 'px)',
       // })
-      ins.callMethod('updateTransform', (data.windowWidth * 0.75));
+      ins.callMethod('updateTransform', (data.windowWidth * 0.75));//展开到0.75*屏幕宽度
       status = 1 // 展开状态
-    } else {
+    } else {//如果移动距离小于0.2*屏幕宽度
       // ins.selectComponent('.page-top').setStyle({
       //   transform: 'translateX(0px)'
       // })
-      ins.callMethod('updateTransform', 0);
+      ins.callMethod('updateTransform', 0);//收起到0
       status = 0 // 收起状态
     }
   }
-  if (startmark > newmark) {
+  if (startmark > newmark) {//如果向左移动手指
     // ins.selectComponent('.page-top').setStyle({
     //   transform: 'translateX(0px)',
     // })
-    ins.callMethod('updateTransform', 0);
+    ins.callMethod('updateTransform', 0);//收起到0
     status = 0 // 收起状态
   }
 }
