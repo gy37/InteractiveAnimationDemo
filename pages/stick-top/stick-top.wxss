@@ -1,24 +1,24 @@
 .page-banner{height:100px;background-color: greenyellow;color:#fff;}
 .page-group{
-  display: table;
+  display: table;/*以table形式显示div*/
   background-color: rgba(00, 00, 00, 1);
   width: 100%;
-  table-layout: fixed;
+  table-layout: fixed;/*表格布局方式，auto或fixed，自动或固定，fixed没有设置宽度时，会平分宽度*/
   position: relative;
   top: 0;
   left: 0;
 }
 .page-group-position{
-  position: fixed;
+  position: fixed;/*滚动超过指定距离，设置position为fixed，相对于浏览器窗口定位*/
 }
 .page-nav-list{
   padding:30rpx 0 ;
-  display: table-cell;
+  display: table-cell;/*作为一个表格单元格显示*/
   text-align: center;
   color: #fff;
 }
 .goods-list{
-  height: 300px;
+  height: 200px;
   background-color: green;
   padding: 20rpx;
   color:#fff;
