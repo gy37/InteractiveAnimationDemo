@@ -1,61 +1,86 @@
 var func = function (e, instance) {
+  // console.log(JSON.stringify(e));
   var dataset = e.instance.getDataset()
   var st = e.instance.getState()
-  var current = st.current || 0
+  var current = st.current || 0//state中保存的current值
   var imgsize = dataset.imgsize
   var width = dataset.width
-  var detail = e.detail
-  var dx = e.detail.dx
+  var detail = e.detail//event.detail = {dx: dx, dy: dy}
+  var dx = e.detail.dx//x方向上移动距离
   // 相比上次没有任何改变, 直接返回
   var diff = typeof st.lastx !== 'undefined' ? (dx - st.lastx) : (dx - 0)
   if (diff === 0) return
-  st.continueCount = st.continueCount || 1
+  st.continueCount = st.continueCount || 1//state中保存的continueCount值
   // 连续滑动过程中, 且到达下一个swiper-item的transition开始了, 修正一下current值
   if (Math.abs(dx) > width * st.continueCount && st.tmpcurrent != -1) {
     console.log('mod is 0 some info', st.tmpcurrent, current)
-    current = st.tmpcurrent
-    st.current = st.tmpcurrent
-    st.tmpcurrent = -1
-    st.continueCount++
+    current = st.tmpcurrent//记录滑动到的位置
+    st.current = st.tmpcurrent//当前位置改为滑动到的位置
+    st.tmpcurrent = -1//要滑动到的位置置为空
+    st.continueCount++//要滑动的距离加一
   }
   // 连续滑动dx的值会比width大，这时候要减去多余的width值
-  var setToWidth = false
-  var dir = dx > 0
+  var setToWidth = false//滑动距离大于width
+  var dir = dx > 0//滑动方向
   if (dx !== 0 && Math.abs(dx) >= width) {
     setToWidth = true
   }
-  dx = dx - width * parseInt(dx / width)
-  if (dx === 0 && setToWidth) {
+  dx = dx - width * parseInt(dx / width)//dx等于原始滑动距离-滑动宽度的倍数
+  if (dx === 0 && setToWidth) {//如果dx等于0，则根据滑动方向设置滑动距离为width或-width
     dx = dir ? width : -width
   }
   // 先判断下方向对不对
-  if (current >= imgsize.length - 1 && dx > 0) return
-  if (current <= 0 && dx < 0) return
+  if (current >= imgsize.length - 1 && dx > 0) return//如果滑动到最右边
+  if (current <= 0 && dx < 0) return//如果滑动到最左边
   var currentSize = imgsize[current]
   var nextSize = dx > 0 ? imgsize[current + 1] : imgsize[current - 1]
-  var currentHeight = st.currentHeight || currentSize.height
-  var diffHeight = Math.abs((nextSize.height - currentSize.height) * (dx / width))
+  var diffHeight = Math.abs((nextSize.height - currentSize.height) * (dx / width))//根据dx滑动距离，设置diffHeight，dx=width时设置为差值
   var realheight = currentSize.height + (nextSize.height - currentSize.height > 0 ? diffHeight : -diffHeight)
-  st.currentHeight = realheight
   e.instance.setStyle({
     height: realheight + 'px'
   })
-  st.lastdir = dx > 0
-  console.log('111', realheight, dx, current, nextSize.height, currentSize.height)
+  // console.log('111', realheight, dx, current, nextSize.height, currentSize.height)
 }
 module.exports = {
-  func: func,
-  change: function(e, instance) {
-    var st = e.instance.getState()
-    console.log('=====change detail is', e.detail.current)
-    st.tmpcurrent = e.detail.current
+  func: func,//bindtransition
+  change: function(e, instance) {//bindchange
+/*{
+    "type":"change",
+    "timeStamp":1676,
+    "target":Object{...},
+    "currentTarget":Object{...},
+    "detail":{
+        "current":1,
+        "currentItemId":"",
+        "source":"touch"
+    },
+    "instance":{
+        "selectAllComponents":null,
+        "selectComponent":null,
+        "removeClass":null,
+        "addClass":null,
+        "hasClass":null,
+        "setStyle":null,
+        "getDataset":null,
+        "getState":null,
+        "triggerEvent":null,
+        "callMethod":null,
+        "requestAnimationFrame":null
+    }
+}
+*/
+    // console.log(JSON.stringify(e), JSON.stringify(instance));//wxs中直接打印对象是[object Object]，需要使用JSON.stringify()转为字符串打印
+    var st = e.instance.getState()//getState返回一个object对象，当有局部变量需要存储起来后续使用的时候用这个方法。
+    console.log('change detail :', e.detail.current)
+    st.tmpcurrent = e.detail.current//使用tmpcurrent记录当前滚动到的位置
   },
-  animationFinish: function(e) {
+  animationFinish: function(e) {//bindanimationfinish
+    // console.log(JSON.stringify(e));
     var st = e.instance.getState()
+    console.log("animation finish: ", st.tmpcurrent);
     if (typeof st.tmpcurrent === 'undefined' || st.tmpcurrent === -1) return
-    console.log('====animation finish is', st.tmpcurrent)
-    st.current = st.tmpcurrent
-    st.tmpcurrent = -1
-    st.continueCount = 1
+    st.current = st.tmpcurrent//取出change()中记录的值，使用current记录保存滚动之前的位置
+    st.tmpcurrent = -1//清空tmpcurrent的值
+    st.continueCount = 1//记录continueCount为1，要滚动的次数
   }
 }

@@ -14,7 +14,7 @@ Page({
     }, {
       height: 150
     }, {
-      height: 150
+      height: 200
     }],
     indicatorDots: true,
     autoplay: false,
